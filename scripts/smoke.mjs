@@ -1,0 +1,94 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {getDb,REPO_ROOT} from './lib/db.mjs';
+import {migrate} from './migrate.mjs';
+import {seed} from './seed.mjs';
+import {run,commands,reads,entities,resolve} from './strategy.mjs';
+import {parseCsv} from './lib/csv.mjs';
+const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'strategy-test-'));
+process.env.DATA_DIR=path.join(tmp,'db');process.env.OUTPUT_DIR=tmp;
+process.env.DATABASE_URL=process.env.TEST_DATABASE_URL||'';
+let db;
+const exercised=new Set();
+async function call(cmd,o={},args=[]){exercised.add(cmd);return run(db,cmd,o,args);}
+const add=(kind,o)=>call('add',{kind,actor:'Test author',...o});
+const update=(kind,ref,o)=>call('update',{kind,ref,actor:'Test author',...o});
+const today=new Date().toISOString().slice(0,10);
+const future=new Date(Date.now()+86400000*50).toISOString().slice(0,10);
+const past=new Date(Date.now()-86400000*50).toISOString().slice(0,10);
+const cli=(args,expected=0)=>{const result=spawnSync(process.execPath,args,{cwd:REPO_ROOT,env:process.env,encoding:'utf8'});assert.equal(result.status,expected,result.stderr||result.stdout);return result.stdout;};
+try{
+ db=await getDb();assert.equal((await db.query("select tablename from pg_tables where schemaname='public' and tablename<>'schema_migrations'")).length,0,'TEST_DATABASE_URL must point to an empty disposable database');
+ assert.equal((await migrate(db)).ran.length,1);assert.equal((await migrate(db)).ran.length,0);
+ await seed(db);await seed(db);assert.equal((await db.query('select * from initiatives')).length,4);
+ for(const cmd of Object.keys(reads)){const rows=await call(cmd);assert.ok(Array.isArray(rows),cmd);}
+ const score=await call('scorecard');assert.equal(Number(score.find(x=>x.code==='M-DAYS').progress_pct),70);assert.equal(Number(score.find(x=>x.code==='M-RET').progress_pct),26.7);assert.equal(score.find(x=>x.code==='M-RET').health,'stale');assert.equal(score.find(x=>x.code==='M-REF').health,'missing');
+ assert.equal((await call('alignment-review'))[0].code,'I-IDEA');assert.equal((await call('dependency-review'))[0].requires,'I-DATA');
+ const findings=await call('compliance');assert.equal(new Set(findings.map(x=>x.rule)).size,9);assert.ok(findings.find(x=>x.rule==='PRIVACY-REVIEW').source.startsWith('https://www.privacy.org.nz/'));
+ assert.equal((await call('weekly-review')).scorecard.length,3);assert.equal((await call('help')).length,commands.length);
+ for(const kind of Object.keys(entities))assert.ok((await call('list',{kind})).length);
+ const found=(await call('show',{kind:'measures',ref:'client RETENTION'}))[0];assert.equal(found.code,'M-RET');assert.equal((await resolve(db,'measures',found.id.slice(0,12))).id,found.id);
+ await assert.rejects(()=>call('show',{kind:'initiatives',ref:'I-'}),/Ambiguous/);
+ await assert.rejects(()=>call('show',{kind:'plans',ref:'missing'}),/No plans/);
+ await assert.rejects(()=>add('measures',{code:'M-BAD',name:'Bad',objective_id:'O-RET',owner:'Alex',unit:'count',baseline:'NaN',target:5,start_on:past,due_on:future}),/Invalid number/);
+ await assert.rejects(()=>add('plans',{code:'P-BAD',name:'Bad',owner:'Alex',start_on:'2026-02-30',due_on:future}),/Invalid ISO date/);
+ await assert.rejects(()=>add('plans',{code:'P-BAD',name:'Bad',owner:'Alex',start_on:future,due_on:past}));
+ await assert.rejects(()=>add('dependencies',{code:'DEP-CYCLE',initiative_id:'I-DATA',requires_id:'I-OPS'}),/cycle/);
+ await assert.rejects(()=>add('dependencies',{code:'DEP-SELF',initiative_id:'I-DATA',requires_id:'I-DATA'}));
+ await assert.rejects(()=>update('decisions','D-CARE',{status:'approved'}));
+ await assert.rejects(()=>call('close-action',{ref:'A-1',actor:'Alex',completed_on:today,evidence:''}),/Give/);
+ await assert.rejects(()=>call('close-action',{ref:'A-1',actor:'Alex',completed_on:future,evidence:'proof'}),/future/);
+ await assert.rejects(()=>update('initiatives','I-DATA',{status:'completed'}));
+ await assert.rejects(()=>add('objectives',{code:'O-REFERRAL',title:'No parent',plan_id:'missing',owner:'Alex',due_on:future}),/No plans/);
+ await assert.rejects(()=>call('add',{kind:'plans',code:'P-NO-ACTOR'}),/actor/);
+ await assert.rejects(()=>update('plans','P-2026',{rogue_field:'x'}),/Unknown/);
+ await call('check-in',{code:'OBS-RET-NOW',measure_id:'M-RET',observed_on:today,value:'90',evidence:'test://source/retention',actor:'Alex'});
+ await call('check-in',{code:'OBS-REF-NOW',measure_id:'M-REF',observed_on:today,value:'4',evidence:'test://source/referrals',actor:'Alex'});
+ await assert.rejects(()=>call('check-in',{code:'OBS-DUP',measure_id:'M-REF',observed_on:today,value:5,evidence:'proof',actor:'Alex'}),/unique|duplicate/);
+ await assert.rejects(()=>call('check-in',{code:'OBS-FUTURE',measure_id:'M-REF',observed_on:future,value:5,evidence:'proof',actor:'Alex'}),/future/);
+ await update('initiatives','I-CARE',{due_on:future,budget:'16000'});
+ await update('initiatives','I-DATA',{status:'completed',evidence:'test://delivery/date-cleanup'});
+ await update('initiatives','I-IDEA',{objective_id:'O-NEW'});
+ await update('decisions','D-CARE',{status:'approved',rationale:'Review every quarter',evidence:'test://minutes/1'});
+ await update('decisions','D-STAFF',{retention_due:future});
+ await update('objectives','O-NEW',{owner:'Aroha Williams'});
+ await call('close-action',{ref:'A-1',actor:'Alex',completed_on:today,evidence:'test://redacted-report'});
+ assert.equal((await call('attention')).length,0,'All nine findings must clear through normal workflows');
+ await call('log',{kind:'plans',ref:'P-2026',actor:'Alex',note:'Monday review complete'});
+ const activity=await call('activity');assert.ok(activity.some(x=>x.action==='update'&&x.details.before));assert.ok(activity.some(x=>x.action==='note'));
+ // Currency totals must never combine NZD and AUD.
+ await add('initiatives',{code:'I-AU',title:'Australian briefing',objective_id:'O-OPS',owner:'Alex',due_on:future,currency:'AUD',budget:100,spent:20});
+ assert.equal((await call('budget-review')).length,2);
+ // Atomic, repeat-safe import with explicit mapping and retained source rows.
+ const imp={kind:'objectives',file:path.join(REPO_ROOT,'fixtures/objectives.csv'),map:path.join(REPO_ROOT,'fixtures/objective-map.json'),actor:'Import reviewer'};
+ assert.equal((await call('import',{...imp,dry_run:true},['cascade']))[0].added,1);assert.equal((await db.query("select * from objectives where code='O-IMP'")).length,0);
+ assert.equal((await call('import',imp,['cascade']))[0].added,1);assert.equal((await call('import',imp,['cascade']))[0].unchanged,1);
+ const provenance=(await db.query("select details from activity where action='import-source'"))[0].details;assert.equal(provenance.row['Source note'],'Synthetic example only');
+ const rows=fs.readFileSync(imp.file,'utf8');const bad=path.join(tmp,'bad.csv');fs.writeFileSync(bad,rows.replaceAll('O-IMP','O-ROLLBACK')+'O-BAD,Bad,NO-PLAN,Alex,2027-06-30,active,test\n');
+ await assert.rejects(()=>call('import',{...imp,file:bad},['cascade']),/No plans/);assert.equal((await db.query("select * from objectives where code='O-ROLLBACK'")).length,0);
+ fs.writeFileSync(bad,rows.replace('Improve service, together','Different objective'));
+ await assert.rejects(()=>call('import',{...imp,file:bad},['cascade']),/Conflicting/);
+ fs.writeFileSync(bad,rows+rows.split('\n')[1]+'\n');await assert.rejects(()=>call('import',{...imp,file:bad},['cascade']),/Duplicate code/);
+ await assert.rejects(()=>call('import',imp,['wrong']),/Use import cascade/);
+ assert.equal(parseCsv('\uFEFFA,B\r\n"one, two","line\nnext"\r\n')[0].B,'line\nnext');assert.throws(()=>parseCsv('A,A\n1,2'),/unique/);assert.throws(()=>parseCsv('A,B\n"oops'),/unclosed/);
+ for(const kind of Object.keys(entities)){
+  const x=(await call('export',{kind,dir:tmp}))[0];assert.ok(fs.existsSync(x.file));
+  const map=path.join(tmp,kind+'-map.json');fs.writeFileSync(map,JSON.stringify(Object.fromEntries(entities[kind].fields.map(k=>[k,k]))));
+  assert.equal((await call('import',{kind,file:x.file,map,actor:'Roundtrip'},['cascade']))[0].added,0,kind+' CSV roundtrip');
+ }
+ const backup=(await call('export',{dir:tmp}))[0];assert.ok(JSON.parse(fs.readFileSync(backup.file)).activity.length>0);
+ await update('initiatives','I-CARE',{title:'<script>alert(1)</script>'});
+ const board=(await call('draft-board-pack',{ref:'P-2026'}))[0];const decision=(await call('draft-decision',{ref:'D-CARE'}))[0];assert.ok(fs.readFileSync(board.file,'utf8').includes('DRAFT'));assert.ok(fs.readFileSync(board.file,'utf8').includes('&lt;script&gt;alert(1)&lt;/script&gt;'));assert.ok(!fs.readFileSync(board.file,'utf8').includes('<script>alert(1)</script>'));assert.ok(fs.existsSync(decision.file));
+ assert.deepEqual([...exercised].sort(),[...commands].sort(),'Every advertised command must be exercised');
+ await db.close();db=null;
+ assert.equal(JSON.parse(cli(['scripts/strategy.mjs','scorecard','--json'])).length,3);
+ assert.match(cli(['scripts/strategy.mjs','show','--kind=initiatives','--ref=I-'],1),/^$/);
+ cli(['scripts/strategy.mjs','unknown'],1);
+ cli(['scripts/view.mjs']);cli(['scripts/docs.mjs']);
+ const html=fs.readFileSync(path.join(tmp,'views/week.html'),'utf8');assert.ok(html.includes('Kauri Services'));assert.ok(html.includes('Scorecard'));
+ assert.ok(fs.readdirSync(path.join(tmp,'docs-out/decision-record')).length===2);
+ console.log(`PASS: ${commands.length} CLI commands, 9 finding rules raised and cleared, calculations, dependencies, closure gates, imports, rollback, exports, documents, views and CLI exit codes (${process.env.TEST_DATABASE_URL?'PostgreSQL':'PGlite'}).`);
+}finally{if(db)await db.close();fs.rmSync(tmp,{recursive:true,force:true});}

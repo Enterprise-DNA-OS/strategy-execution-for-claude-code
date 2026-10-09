@@ -1,0 +1,172 @@
+{
+  "plans": {
+    "required": [
+      "code",
+      "name",
+      "owner",
+      "start_on",
+      "due_on"
+    ],
+    "fields": [
+      "code",
+      "name",
+      "owner",
+      "start_on",
+      "due_on"
+    ]
+  },
+  "objectives": {
+    "required": [
+      "code",
+      "title",
+      "plan_id",
+      "owner",
+      "due_on"
+    ],
+    "fields": [
+      "code",
+      "title",
+      "plan_id",
+      "owner",
+      "due_on",
+      "status"
+    ],
+    "refs": {
+      "plan_id": "plans"
+    }
+  },
+  "measures": {
+    "required": [
+      "code",
+      "name",
+      "objective_id",
+      "owner",
+      "unit",
+      "baseline",
+      "target",
+      "start_on",
+      "due_on"
+    ],
+    "fields": [
+      "code",
+      "name",
+      "objective_id",
+      "owner",
+      "unit",
+      "baseline",
+      "target",
+      "start_on",
+      "due_on",
+      "cadence_days"
+    ],
+    "refs": {
+      "objective_id": "objectives"
+    }
+  },
+  "observations": {
+    "required": [
+      "code",
+      "measure_id",
+      "observed_on",
+      "value",
+      "evidence",
+      "recorded_by"
+    ],
+    "fields": [
+      "code",
+      "measure_id",
+      "observed_on",
+      "value",
+      "evidence",
+      "recorded_by"
+    ],
+    "refs": {
+      "measure_id": "measures"
+    }
+  },
+  "initiatives": {
+    "required": [
+      "code",
+      "title",
+      "owner",
+      "due_on"
+    ],
+    "fields": [
+      "code",
+      "title",
+      "objective_id",
+      "owner",
+      "due_on",
+      "status",
+      "budget",
+      "spent",
+      "currency",
+      "evidence"
+    ],
+    "refs": {
+      "objective_id": "objectives"
+    }
+  },
+  "dependencies": {
+    "required": [
+      "code",
+      "initiative_id",
+      "requires_id"
+    ],
+    "fields": [
+      "code",
+      "initiative_id",
+      "requires_id"
+    ],
+    "refs": {
+      "initiative_id": "initiatives",
+      "requires_id": "initiatives"
+    }
+  },
+  "decisions": {
+    "required": [
+      "code",
+      "title",
+      "objective_id",
+      "owner",
+      "due_on"
+    ],
+    "fields": [
+      "code",
+      "title",
+      "objective_id",
+      "owner",
+      "due_on",
+      "status",
+      "rationale",
+      "evidence",
+      "personal_data",
+      "retention_due"
+    ],
+    "refs": {
+      "objective_id": "objectives"
+    }
+  },
+  "actions": {
+    "required": [
+      "code",
+      "title",
+      "decision_id",
+      "owner",
+      "due_on"
+    ],
+    "fields": [
+      "code",
+      "title",
+      "decision_id",
+      "owner",
+      "due_on",
+      "status",
+      "completed_on",
+      "evidence"
+    ],
+    "refs": {
+      "decision_id": "decisions"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "captured": "2026-10-09",
+  "data": "Fictional Kauri Services demo",
+  "screens": [
+    {
+      "title": "Know which results need fresh evidence",
+      "ask": "Which measures need attention before our weekly review?",
+      "command": "npm run strategy -- scorecard",
+      "output": "  code    name                owner           unit     actual  target  progress_pct  expected_pct  health  \n  ------  ------------------  --------------  -------  ------  ------  ------------  ------------  --------\n  M-DAYS  Delivery lead time  Noah Patel      days     13      10      70.0          50.0          on track\n  M-REF   Referral handovers  Aroha Williams  count            12                    50.0          missing \n  M-RET   Client retention    Mara Chen       percent  84      95      26.7          50.0          stale"
+    },
+    {
+      "title": "Find what is holding delivery up",
+      "ask": "Which prerequisite is blocking another initiative?",
+      "command": "npm run strategy -- dependency-review",
+      "output": "  code   initiative  title               owner       requires  waiting_for          prerequisite_status  prerequisite_due\n  -----  ----------  ------------------  ----------  --------  -------------------  -------------------  ----------------\n  DEP-1  I-OPS       Delivery checklist  Noah Patel  I-DATA    Clean service dates  active               2026-10-07"
+    },
+    {
+      "title": "Question spending without a goal",
+      "ask": "Which initiatives have no strategic objective?",
+      "command": "npm run strategy -- alignment-review",
+      "output": "  code    title                 objective  owner           status   due_on      currency  budget  spent  variance  blockers\n  ------  --------------------  ---------  --------------  -------  ----------  --------  ------  -----  --------  --------\n  I-IDEA  New event experiment  UNALIGNED  Aroha Williams  planned  2026-11-08  NZD       3000    500    -2500     0"
+    }
+  ]
+}

@@ -1,13 +1,43 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Strategy Execution for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Strategy week",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Attention",
+        "sql": "select * from strategy_findings order by due_on,code"
+      },
+      {
+        "title": "Scorecard",
+        "sql": "select * from strategy_scorecard order by code"
+      }
+    ]
+  },
+  {
+    "name": "portfolio",
+    "title": "Initiative portfolio",
+    "sections": [
+      {
+        "title": "Initiatives",
+        "sql": "select * from strategy_portfolio order by due_on,code"
+      },
+      {
+        "title": "Waiting for prerequisites",
+        "sql": "select * from strategy_dependencies order by code"
+      }
+    ]
+  },
+  {
+    "name": "decisions",
+    "title": "Decisions and follow-through",
+    "sections": [
+      {
+        "title": "Decisions",
+        "sql": "select code,title,owner,due_on,status from decisions order by due_on,code"
+      },
+      {
+        "title": "Actions",
+        "sql": "select code,title,owner,due_on,status from actions order by due_on,code"
       }
     ]
   }

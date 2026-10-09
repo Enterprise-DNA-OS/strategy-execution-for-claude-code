@@ -1,11 +1,54 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "board-pack",
+    "title": "Strategy board pack: DRAFT",
+    "for_each": "select id,code from plans order by code",
+    "file": "code",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Objectives",
+        "sql": "select code,title,owner,due_on,status from objectives where plan_id=$1 order by code"
+      },
+      {
+        "title": "Scorecard",
+        "sql": "select s.* from strategy_scorecard s join objectives o on o.code=s.objective where o.plan_id=$1 order by s.code"
+      },
+      {
+        "title": "Initiatives",
+        "sql": "select s.* from strategy_portfolio s join objectives o on o.code=s.objective where o.plan_id=$1 order by s.code"
+      }
+    ]
+  },
+  {
+    "name": "decision-record",
+    "title": "Decision record: DRAFT",
+    "for_each": "select id,code from decisions order by code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Decision and evidence",
+        "sql": "select code,title,owner,status,rationale,evidence from decisions where id=$1"
+      },
+      {
+        "title": "Follow-through",
+        "sql": "select code,title,owner,due_on,status,completed_on,evidence from actions where decision_id=$1 order by code"
+      }
+    ]
+  },
+  {
+    "name": "initiative-brief",
+    "title": "Initiative brief: DRAFT",
+    "for_each": "select id,code from initiatives order by code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Approved scope and spending",
+        "sql": "select code,title,owner,due_on,status,budget,spent,currency,evidence from initiatives where id=$1"
+      },
+      {
+        "title": "Prerequisites",
+        "sql": "select r.code,r.title,r.status,r.due_on from dependencies d join initiatives r on r.id=d.requires_id where d.initiative_id=$1 order by r.code"
+      }
     ]
   }
 ]

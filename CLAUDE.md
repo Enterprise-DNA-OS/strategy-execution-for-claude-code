@@ -1,43 +1,30 @@
-# Strategy Execution for Claude Code: operating instructions
+# Strategy Execution for Claude Code
 
-This file is the brain. Claude Code reads it at the start of every session. It says who this is for, how work gets done, and the one right way to do each recurring job.
+Run the weekly strategy review for an owner-led firm. The database holds plans, objectives, measures and observations, initiatives and dependencies, decisions and follow-through actions. Use the CLI for every answer about records.
 
-## Who this is for
+## One route per recurring job
 
-- **Business:** [YOUR BUSINESS]
-- **Operator:** [YOUR NAME], [your role]
-- **What matters most:** [the one or two outcomes you care about]
-
-Fill this in once. A worker with context knows. A worker without it guesses.
-
-## How to work
-
-1. **Take a brief, not a script.** The operator describes the outcome. You run the right command and present the answer.
-2. **Read before you write.** Before drafting anything about a record, read its full history first.
-3. **Plain language.** Short sentences. No filler. Numbers in tables.
-4. **Silent success, loud problems.** No play-by-play. Say what broke and what you did about it.
-5. **Stop at the line.** Anything that sends, deletes, or faces a customer waits for a yes in this session.
-
-## Routing table: one right way for each recurring job
-
-| When the operator asks for... | Use this |
+| Job | Route |
 |---|---|
-| <!-- TODO(author): one row per slash command --> | `/...` |
+| Monday review | /weekly-review |
+| Results and freshness | /scorecard, /stale-updates, /measure-history |
+| Delivery and blockers | /initiative-review, /dependency-review, /alignment-review |
+| Owners and spending | /owner-load, /budget-review |
+| Decide and follow through | /decision-review, /action-review, /close-action |
+| Record the evidence | /check-in, /add, /update, /log |
+| Missing or overdue evidence | /attention, /compliance |
+| Bring records across | /import, /export |
+| Board pack and decisions | /draft-board-pack, /draft-decision, /docs |
+| Read-only snapshots | /view, /new-view |
+| Change fields and rules | /customise |
+| Explore records | /list, /show, /activity, /help |
 
-If an ask fits nothing here, run the CLI directly (`npm run <cli> -- --help`) and then propose a new command for it.
+Read .claude/commands/<job>.md. Every CLI command accepts --json. All identifiers are resolved by code, case-insensitive name or partial UUID. Ambiguous matches stop and list candidates. Never guess the actor, measurement, evidence, approval or currency.
 
-## Hard rules
+## Boundaries
 
-- Never send email or messages from here. Draft to `drafts/`, a person sends.
-- Never delete records without an explicit yes in this session. Prefer marking closed or archived.
-- Never invent a record. If a name is ambiguous, list the candidates and ask.
-- The database is the source of truth. If the answer is not in it, say so.
+Never send, publish, pay, delete records or claim that a check certifies compliance. Keep personal information out of strategy notes unless needed. A retention finding asks the owner to review purpose; it does not delete data. Record history is visible but not tamper-proof. A database administrator can change it.
 
-## Where things live
+Use migrations for schema changes. Never modify an applied migration. Run npm test after changes. Use npm run demo only on a disposable database. DATABASE_URL selects PostgreSQL; otherwise PGlite uses DATA_DIR. Do not commit credentials, real exports, generated reports or local databases. RLS has no public policies. A shared installation needs deliberately configured database roles, backups and access controls.
 
-- `scripts/` the CLI. `scripts/lib/db.mjs` picks `DATABASE_URL` (Postgres, Supabase) or the embedded database in `.data/`.
-- `supabase/migrations/` the schema, plain SQL. `npm run migrate` applies it.
-- `.claude/commands/` the slash commands. Add one every time the same ask comes twice.
-- `docs/` the thesis and the guide for moving off Cascade.
-
-Built by Enterprise DNA. Installed and run for you as part of Omni: https://enterprisedna.co/omni/instead-of/cascade
+Commit on main with the trailer Agent: omni-rebuild-strategist. This package has no application front end, discovery service, external integration, email sender or background scheduler. Enterprise DNA scopes those separately when installing Omni by Enterprise DNA.
