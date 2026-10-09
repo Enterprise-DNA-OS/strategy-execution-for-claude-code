@@ -11,7 +11,18 @@
       },
       {
         "title": "Scorecard",
-        "sql": "select s.* from strategy_scorecard s join objectives o on o.code=s.objective where o.plan_id=$1 order by s.code"
+        "sql": "select s.* from strategy_scorecard s join objectives o on o.code=s.objective where o.plan_id=$1 order by s.code",
+        "columns": [
+          "code",
+          "name",
+          "owner",
+          "unit",
+          "actual",
+          "target",
+          "observed_on",
+          "progress_pct",
+          "health"
+        ]
       },
       {
         "title": "Initiatives",

@@ -9,7 +9,18 @@
       },
       {
         "title": "Scorecard",
-        "sql": "select * from strategy_scorecard order by code"
+        "sql": "select * from strategy_scorecard order by code",
+        "columns": [
+          "code",
+          "name",
+          "owner",
+          "unit",
+          "actual",
+          "target",
+          "observed_on",
+          "progress_pct",
+          "health"
+        ]
       }
     ]
   },
