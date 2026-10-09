@@ -28,3 +28,7 @@ Never send, publish, pay, delete records or claim that a check certifies complia
 Use migrations for schema changes. Never modify an applied migration. Run npm test after changes. Use npm run demo only on a disposable database. DATABASE_URL selects PostgreSQL; otherwise PGlite uses DATA_DIR. Do not commit credentials, real exports, generated reports or local databases. RLS has no public policies. A shared installation needs deliberately configured database roles, backups and access controls.
 
 Commit on main with the trailer Agent: omni-rebuild-strategist. This package has no application front end, discovery service, external integration, email sender or background scheduler. Enterprise DNA scopes those separately when installing Omni by Enterprise DNA.
+
+## Import sources
+
+Use `import strategyblocks` for StrategyBlocks exports and `import cascade` for Cascade exports. Read the matching guide under docs before mapping. The vendor is recorded in import provenance. Never describe the synthetic fixtures as vendor headers.

@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Evidence before colour",
+    "ask": "Which results are stale or missing?",
+    "command": "npm run strategy -- scorecard",
+    "output": "  code    name                owner           unit     actual  target  progress_pct  expected_pct  health  \n  ------  ------------------  --------------  -------  ------  ------  ------------  ------------  --------\n  M-DAYS  Delivery lead time  Noah Patel      days     13      10      70.0          50.0          on track\n  M-REF   Referral handovers  Aroha Williams  count            12                    50.0          missing \n  M-RET   Client retention    Mara Chen       percent  84      95      26.7          50.0          stale"
+  },
+  {
+    "title": "The Monday action list",
+    "ask": "What needs attention before our strategy review?",
+    "command": "npm run strategy -- attention",
+    "output": "  rule                  code     owner           due_on      finding                                              \n  --------------------  -------  --------------  ----------  -----------------------------------------------------\n  INITIATIVE-BUDGET     I-CARE   Mara Chen       2026-10-05  Recorded spend exceeds approved budget               \n  INITIATIVE-DUE        I-CARE   Mara Chen       2026-10-05  Initiative is overdue                                \n  DECISION-DUE          D-CARE   Mara Chen       2026-10-06  Decision awaits approval or rejection                \n  ACTION-DUE            A-1      Noah Patel      2026-10-07  Decision action is overdue                           \n  DEPENDENCY-BLOCKED    DEP-1    Noah Patel      2026-10-07  Waiting for I-DATA                                   \n  INITIATIVE-DUE        I-DATA   Noah Patel      2026-10-07  Initiative is overdue                                \n  PRIVACY-REVIEW        D-STAFF  Noah Patel      2026-10-08  Personal information needs a retention-purpose review\n  INITIATIVE-ALIGNMENT  I-IDEA   Aroha Williams  2026-11-08  No objective assigned                                \n  OWNER-MISSING         O-NEW                    2026-12-08  Assign an accountable owner                          \n  MEASURE-STALE         M-REF    Aroha Williams  2027-01-07  Measure is missing                                   \n  MEASURE-STALE         M-RET    Mara Chen       2027-01-07  Measure is stale"
+  },
+  {
+    "title": "The prerequisite behind a delay",
+    "ask": "Which unfinished prerequisite is holding up another initiative?",
+    "command": "npm run strategy -- dependency-review",
+    "output": "  code   initiative  title               owner       requires  waiting_for          prerequisite_status  prerequisite_due\n  -----  ----------  ------------------  ----------  --------  -------------------  -------------------  ----------------\n  DEP-1  I-OPS       Delivery checklist  Noah Patel  I-DATA    Clean service dates  active               2026-10-07"
+  }
+]

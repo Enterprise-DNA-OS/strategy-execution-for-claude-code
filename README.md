@@ -4,15 +4,15 @@ Your objectives, measures, initiatives, dependencies and decision follow-ups in 
 
 | Do it yourself | We customise it | We run it for you |
 |---|---|---|
-| Free, MIT. Clone it and run the demo. | Your fields, rules, Cascade exports and board pack. | Installed and operated through Omni by Enterprise DNA. A setup fee, then a retainer. |
+| Free, MIT. Clone it and run the demo. | Your fields, rules, StrategyBlocks exports and board pack. | Installed and operated through Omni by Enterprise DNA. A setup fee, then a retainer. |
 
-[Get your version built](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=cascade) · [Instead of Cascade](https://enterprisedna.co/omni/instead-of/cascade)
+[Get your version built](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=strategyblocks) · [Instead of StrategyBlocks](https://enterprisedna.co/omni/instead-of/strategyblocks)
 
 ## What this replaces
 
 The manual weekly strategy review: collect evidence, calculate progress, chase stale updates, check initiative spending, resolve dependencies, prepare decisions and assemble the board pack. The database runs through Claude Code, Codex, OpenCode or Cursor. The free base has no application front end.
 
-Cascade quotes retail plans privately. Its public 2026 partner calculator shows a US$30,000 annual platform fee for the 1-500 employee tier. That is wholesale pricing, not a retail offer or an observed customer invoice. [Vendor calculator](https://plan.cascade.app/) and [retail pricing](https://www.cascade.app/pricing), checked 9 October 2026. Compare the actual quote and services your business needs.
+StrategyBlocks publishes Premium 1-50 Staff at US$750 per subscription per year, with one subscription per person. Thirty subscriptions imply US$22,500 a year. This is a scenario from the published rate, not a verified customer invoice. Enterprise and not-for-profit pricing is quoted. [Vendor pricing](https://www.strategyblocks.com/pricing/), checked 9 October 2026. Compare your actual seat count and agreement.
 
 ## Quick start
 
@@ -38,7 +38,7 @@ Monday: /weekly-review combines the scorecard, attention list, dependencies and 
 
 ## Ten questions this database answers today
 
-These are verified questions about this build. They are not claims that Cascade cannot answer them.
+These are verified questions about this build. They are not claims that the incumbent cannot answer them.
 
 1. Which results look current but rely on old evidence? /stale-updates
 2. Which measures are improving toward a lower target? /scorecard
@@ -96,14 +96,16 @@ Progress is (actual minus baseline) divided by (target minus baseline), for incr
 
 ## Bring your history
 
-Cascade exports individual report widgets as CSV. Select every column you need before exporting. Headers depend on the report, so create an explicit map to the fields in entities.json. The sample is synthetic, not a captured vendor export.
+StrategyBlocks documents block CSV exports, block-and-descendant reports, and a metrics CSV download. Choose the records you need, inspect the headers and prepare an explicit column map. The sample is synthetic, not a captured vendor export.
 
 ```bash
-npm run strategy -- import cascade --kind=objectives --file=fixtures/objectives.csv --map=fixtures/objective-map.json --actor="Your name" --dry-run
-npm run strategy -- import cascade --kind=objectives --file=fixtures/objectives.csv --map=fixtures/objective-map.json --actor="Your name"
+npm run strategy -- import strategyblocks --kind=objectives --file=fixtures/strategyblocks-blocks.csv --map=fixtures/strategyblocks-block-map.json --actor="Your name" --dry-run
+npm run strategy -- import strategyblocks --kind=objectives --file=fixtures/strategyblocks-blocks.csv --map=fixtures/strategyblocks-block-map.json --actor="Your name"
 ```
 
-The same import command accepts all eight entity types. One file is one transaction. Repeated identical rows are unchanged; conflicting records stop for review. Original row values and mapping are retained, including unmapped columns. Export one entity as CSV or export the complete record set and activity as JSON. [Mapping, import order and reconciliation](docs/replace-cascade.md).
+With a mapping prepared, one command imports each export. All eight entity types are supported. One file is one transaction. Repeated identical rows are unchanged; conflicting records stop for review. Original row values, vendor and mapping are retained, including unmapped columns. Export one entity as CSV or the complete record set and activity as JSON. [StrategyBlocks mapping, import order and reconciliation](docs/replace-strategyblocks.md).
+
+The existing [Cascade import](docs/replace-cascade.md) remains available through `import cascade`. Neither import invents parent links, historical observations or missing evidence. StrategyBlocks' full downloadable database is not directly ingested.
 
 ## Paperwork and views
 
@@ -134,6 +136,6 @@ npm test creates a temporary database, migrates, seeds twice, exercises all 26 C
 
 ## Installed for you
 
-Enterprise DNA maps and checks your exports, builds your rules and reporting, adds a web front end or a different stack when agreed, and runs the system through Omni by Enterprise DNA. A setup fee, then a retainer. [Book 30 minutes with Sam](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=cascade).
+Enterprise DNA maps and checks your exports, builds your rules and reporting, adds a web front end or a different stack when agreed, and runs the system through Omni by Enterprise DNA. A setup fee, then a retainer. [Book 30 minutes with Sam](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=strategyblocks).
 
-MIT. Copyright 2026 Enterprise DNA. Not affiliated with Cascade or Anthropic. Hosting and agent use have their own costs.
+MIT. Copyright 2026 Enterprise DNA. Not affiliated with StrategyBlocks, Cascade or Anthropic. Hosting and agent use have their own costs.

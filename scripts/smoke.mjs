@@ -73,11 +73,24 @@ try{
  await assert.rejects(()=>call('import',{...imp,file:bad},['cascade']),/Conflicting/);
  fs.writeFileSync(bad,rows+rows.split('\n')[1]+'\n');await assert.rejects(()=>call('import',{...imp,file:bad},['cascade']),/Duplicate code/);
  await assert.rejects(()=>call('import',imp,['wrong']),/Use import cascade/);
+ // StrategyBlocks has a separately named import source, with original headers retained.
+ const sb={kind:'objectives',file:path.join(REPO_ROOT,'fixtures/strategyblocks-blocks.csv'),map:path.join(REPO_ROOT,'fixtures/strategyblocks-block-map.json'),actor:'StrategyBlocks reviewer'};
+ assert.equal((await call('import',{...sb,dry_run:true},['strategyblocks']))[0].added,1);
+ assert.equal((await db.query("select * from objectives where code='SB-OBJ-1'")).length,0);
+ assert.equal((await call('import',sb,['strategyblocks']))[0].added,1);
+ assert.equal((await call('import',sb,['strategyblocks']))[0].unchanged,1);
+ const sbSource=(await db.query("select details from activity where action='import-source' and details->>'vendor'='StrategyBlocks'"))[0].details;
+ assert.equal(sbSource.row['Source note'],'Synthetic StrategyBlocks mapping example');
+ assert.equal(sbSource.mapping.title,'Block title');
+ const sbBad=path.join(tmp,'sb-invalid.csv');
+ fs.writeFileSync(sbBad,fs.readFileSync(sb.file,'utf8').replace('SB-OBJ-1','SB-ROLLBACK')+'SB-BAD,Bad,P-2026,Mara Chen,2026-02-30,active,Synthetic invalid date\n');
+ await assert.rejects(()=>call('import',{...sb,file:sbBad},['strategyblocks']),/Invalid ISO date/);
+ assert.equal((await db.query("select * from objectives where code='SB-ROLLBACK'")).length,0);
  assert.equal(parseCsv('\uFEFFA,B\r\n"one, two","line\nnext"\r\n')[0].B,'line\nnext');assert.throws(()=>parseCsv('A,A\n1,2'),/unique/);assert.throws(()=>parseCsv('A,B\n"oops'),/unclosed/);
  for(const kind of Object.keys(entities)){
   const x=(await call('export',{kind,dir:tmp}))[0];assert.ok(fs.existsSync(x.file));
   const map=path.join(tmp,kind+'-map.json');fs.writeFileSync(map,JSON.stringify(Object.fromEntries(entities[kind].fields.map(k=>[k,k]))));
-  assert.equal((await call('import',{kind,file:x.file,map,actor:'Roundtrip'},['cascade']))[0].added,0,kind+' CSV roundtrip');
+  assert.equal((await call('import',{kind,file:x.file,map,actor:'Roundtrip'},['strategyblocks']))[0].added,0,kind+' CSV roundtrip');
  }
  const backup=(await call('export',{dir:tmp}))[0];assert.ok(JSON.parse(fs.readFileSync(backup.file)).activity.length>0);
  await update('initiatives','I-CARE',{title:'<script>alert(1)</script>'});

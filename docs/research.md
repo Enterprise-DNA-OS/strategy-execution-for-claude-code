@@ -1,13 +1,28 @@
-# Target research: 9 October 2026
+# StrategyBlocks selection, 9 October 2026
 
-Cascade, strategy-execution family. No prior build in this registry uses that family. Isolocity's manufacturing-quality family was excluded from this run.
+US$22,500 annual scenario: 30 people at the vendor's published US$750 annual subscription. Premium 1-50 Staff includes one subscription and the page states each person requires a subscription. This is arithmetic from a public rate, not a verified NZ or AU customer invoice. Enterprise and not-for-profit prices are quoted. No named EDNA customer use was found in the available local records, and no live customer system was queried under this build's restricted scope.
 
-Scores in order: annual bill 3, data-shaped 5, buyer evidence 2, search demand 3, one-session buildable 5, import path 4. Total 22/30. These are editorial scores, not measured market statistics.
+| Candidate | Annual bill | Data-shaped | Buyers | Search | Buildable | Import | Total |
+|---|---|---|---|---|---|---|---|
+| StrategyBlocks | 3 | 5 | 2 | 2 | 4 | 4 | 20 |
+| ClearPoint Strategy | 1 | 5 | 2 | 2 | 3 | 3 | 16 |
+| Cascade | 1 | 5 | 2 | 2 | 3 | 3 | 16 |
+| Vitally | 1 | 5 | 2 | 2 | 2 | 3 | 15 |
 
-Annual evidence: the [vendor's public 2026 wholesale calculator](https://plan.cascade.app/) displays US$30,000 for the platform in the 1-500 employee tier. This is not a customer invoice, a retail quote or proof of an EDNA customer's bill. Its integrations and optional services are additional calculator inputs. [Retail pricing](https://www.cascade.app/pricing) is quoted by plan. Public alternative search results exist, but no keyword-volume dataset was consulted. Local customer documents contained no confirmed Cascade user and no live CRM usage or invoice was verified.
+These are editorial judgments. Search results show alternative-intent pages, not measured keyword volume. ClearPoint, Cascade and Vitally have quote-based paid pricing on the pages checked this run, so their annual-invoice filter remains unproven. The existing Cascade research refers to a partner calculator; a partner quote is not evidence of a buyer's retail bill.
 
-[About Cascade](https://www.cascade.app/about-us) identifies its Sydney origin. That establishes an Australian connection, not a confirmed local buyer. [Export documentation](https://support.cascade.app/sharing-permissions-and-exporting-a-report) provides a CSV path. Reports are configurable, so an explicit column map is necessary.
+The registry had no registered strategy-execution build when selected. Manufacturing quality, already built as Isolocity, was excluded. Scaffold discovered an existing private strategy-execution repo with Cascade support but no corresponding registry target. This run preserved that implementation and added a tested StrategyBlocks import, switching guide and comparison page. No new copy of the template or second command library was created.
 
-ClearPoint scored 20/30 (1,5,2,3,5,4). [Its pricing page](https://www.clearpointstrategy.com/pricing) gives custom quotes with no annual figure. Gatekeeper scored 20/30 (1,5,2,3,4,5) and overlaps already-built contract and risk families. [Current Gatekeeper pricing](https://www.gatekeeperhq.com/pricing) is quote-based, so old published prices were discarded. [Snipe-IT](https://snipeitapp.com/pricing) was rejected because its public hosted plans fall below the lane's annual-bill threshold and the software is already open source.
+## Sources checked this run
 
-The comparison page makes no claim that Cascade lacks an arbitrary-question feature. The three examples are actual runs against fictional demo data. It distinguishes the free record-management scope from a complete replacement of every vendor feature.
+- [StrategyBlocks pricing](https://www.strategyblocks.com/pricing/): US$750 per annual subscription, Premium 1-50 Staff, one person per subscription. Live HTML was downloaded and inspected. Enterprise/not-for-profit is POA. Support and backup are included benefits, not claimed paid add-ons.
+- [Company](https://www.strategyblocks.com/about/): Auckland and Wellington offices establish an NZ connection, not a confirmed EDNA buyer.
+- [Block menu](https://www.strategyblocks.com/strategyblocks-full-manual/block-menu-navigation/): block CSV and descendant report exports, metrics, risks, dependencies and supporting documents.
+- [Vendor guide](https://www.strategyblocks.com/wp-content/uploads/2023/03/SB6-Downloadable-Guide-V1.pdf): Reports area supports metrics CSV and a downloadable company database. The importer uses CSV, not that database.
+- [Milestone and dashboard features](https://www.strategyblocks.com/blog/feature-focus-milestone-commentary-and-page-duplication/): the incumbent already offers milestone commentary and reporting. No claim is made that it lacks these capabilities.
+- [G2 alternatives](https://www.g2.com/products/strategyblocks/competitors/alternatives/): visible alternative intent, not search-volume evidence.
+- [Capterra reviews](https://www.capterra.com/p/165865/StrategyBlocks/): a small positive review sample. No broad dissatisfaction claim is justified.
+- [ClearPoint pricing](https://www.clearpointstrategy.com/pricing), [Cascade pricing](https://www.cascade.app/pricing), [Vitally pricing](https://www.vitally.io/pricing/): custom quotes rather than public paid annual rates.
+- [NZ Privacy Act IPP9 guidance](https://www.privacy.org.nz/privacy-principles/9/): personal-information retention purpose. Review deadlines are local policy, not a statutory universal period.
+
+The ten questions demonstrate this implementation's working answers. They do not assert an unverified absence in StrategyBlocks. No payments, payroll, regulated professional decision-making, network service, customer repository or customer records are part of this build.

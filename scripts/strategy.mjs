@@ -93,7 +93,8 @@ export async function run(db,command,opts={},args=[]){
   await record(db,kind,r.id,actor,'note',{note:opts.note});return [{code:r.code,logged:true}];
  }
  if(command==='import'){
-  if(args[0]!=='cascade')throw Error('Use import cascade --kind=... --file=... --map=... --actor=... [--dry-run]');
+  const vendor = {cascade:'Cascade',strategyblocks:'StrategyBlocks'}[args[0]];
+  if(!vendor)throw Error('Use import cascade or import strategyblocks --kind=... --file=... --map=... --actor=... [--dry-run]');
   const kind=need(opts,'kind'),spec=entity(kind),actor=need(opts,'actor');
   const mapping=JSON.parse(fs.readFileSync(need(opts,'map'),'utf8'));
   if(!mapping||Array.isArray(mapping)||typeof mapping!=='object')throw Error('Map must be an object of local field to source header');
@@ -108,7 +109,7 @@ export async function run(db,command,opts={},args=[]){
     if(seen.has(data.code.toLowerCase()))throw Error(`Duplicate code in file: ${data.code}`);seen.add(data.code.toLowerCase());
     const existing=await db.query(`select * from ${kind} where lower(code)=lower($1)`,[data.code]);
     if(existing.length){if(existing.length>1||Object.entries(data).some(([k,v])=>String(existing[0][k]??'')!==String(v??'')))throw Error(`Conflicting existing record ${data.code}; review before updating`);unchanged++;continue;}
-    const r=await insert(db,kind,data,actor);await record(db,kind,r.id,actor,'import-source',{vendor:'Cascade',source_file:path.basename(opts.file),row,mapping});added++;
+    const r=await insert(db,kind,data,actor);await record(db,kind,r.id,actor,'import-source',{vendor,source_file:path.basename(opts.file),row,mapping});added++;
    }
    return [{kind,rows:rows.length,added,unchanged,dry_run:Boolean(opts.dry_run),unmapped_headers:headers.filter(h=>!Object.values(mapping).includes(h)).join(', ')}];
   },Boolean(opts.dry_run));
