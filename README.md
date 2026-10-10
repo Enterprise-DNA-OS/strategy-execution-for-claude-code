@@ -6,7 +6,7 @@ Your objectives, measures, initiatives, dependencies and decision follow-ups in 
 |---|---|---|
 | Free, MIT. Clone it and run the demo. | Your fields, rules, StrategyBlocks exports and board pack. | Installed and operated through Omni by Enterprise DNA. A setup fee, then a retainer. |
 
-[Get your version built](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=strategyblocks) · [Instead of StrategyBlocks](https://enterprisedna.co/omni/instead-of/strategyblocks)
+[Get your version built](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=strategyblocks) · [Instead of StrategyBlocks](https://enterprisedna.co/omni/instead-of/strategyblocks?utm_source=github&utm_medium=readme&utm_campaign=strategyblocks)
 
 ## What this replaces
 
